@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "140303361267",
+    "project_id": "spotifyclone-fed88",
+    "storage_bucket": "spotifyclone-fed88.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:140303361267:android:edbc4fd8143ec643158386",
+        "android_client_info": {
+          "package_name": "com.example.firebaseplayground"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "140303361267-husvvqd6aqprd7e01mt2seto56ces3tc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD--qImM--Jd3obVjo2cWxI4ziXK54cjek"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "140303361267-husvvqd6aqprd7e01mt2seto56ces3tc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
