@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.firebaseplayground">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,20 +12,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FirebasePlayground">
         <activity
-            android:name=".activities.ForgotPasswordActivity"
-            android:theme="@style/Theme.FirebasePlayground.NoActionBar"
-            android:screenOrientation="portrait"
+            android:name=".activities.UserProfileActivity"
             android:exported="true" />
+        <activity
+            android:name=".activities.ForgotPasswordActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.FirebasePlayground.NoActionBar" />
         <activity
             android:name=".activities.RegisterActivity"
-            android:theme="@style/Theme.FirebasePlayground.NoActionBar"
+            android:exported="true"
             android:screenOrientation="portrait"
-            android:exported="true" />
+            android:theme="@style/Theme.FirebasePlayground.NoActionBar" />
         <activity
             android:name=".activities.LoginActivity"
-            android:theme="@style/Theme.FirebasePlayground.NoActionBar"
+            android:exported="true"
             android:screenOrientation="portrait"
-            android:exported="true" />
+            android:theme="@style/Theme.FirebasePlayground.NoActionBar" />
         <activity
             android:name=".activities.SplashActivity"
             android:exported="true"

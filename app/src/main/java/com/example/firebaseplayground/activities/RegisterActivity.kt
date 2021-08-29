@@ -134,18 +134,27 @@ class RegisterActivity : BaseActivity() {
                     })
         }
 
-        fun userRegistrationSuccess() {
-            hideProgressDialog()
 
-            Toast.makeText(
-                this@RegisterActivity,
-                resources.getString(R.string.register_success),
-                Toast.LENGTH_SHORT
-            ).show()
+    }
+    fun userRegistrationSuccess() {
 
-            FirebaseAuth.getInstance().signOut()
-            finish()
-        }
+        // Hide the progress dialog
+        hideProgressDialog()
+
+        Toast.makeText(
+            this@RegisterActivity,
+            resources.getString(R.string.register_success),
+            Toast.LENGTH_SHORT
+        ).show()
+
+
+        /**
+         * Here the new user registered is automatically signed-in so we just sign-out the user from firebase
+         * and send him to Intro Screen for Sign-In
+         */
+        FirebaseAuth.getInstance().signOut()
+        // Finish the Register Screen
+        finish()
     }
 
     }

@@ -4,10 +4,13 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import com.example.firebaseplayground.R
 import com.example.firebaseplayground.databinding.ActivityLoginBinding
+import com.example.firebaseplayground.models.User
+import com.example.firebaseplayground.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 
 @Suppress("DEPRECATION")
@@ -17,7 +20,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding= ActivityLoginBinding.inflate(layoutInflater)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
 
@@ -92,5 +95,22 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                     }
                 }
         }
+    }
+
+    fun userLoggedInSuccess(user: User) {
+
+        hideProgressDialog()
+        Log.i("First Name: ", user.firstName)
+        Log.i("Last Name: ", user.lastName)
+        Log.i("Email: ", user.email)
+
+        if (user.profileCompleted == 0) {
+            val intent = Intent(this@LoginActivity, UserProfileActivity::class.java)
+            intent.putExtra(Constants.EXTRA_USER_DETAILS, user)
+            startActivity(intent)
+        } else {
+            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+        }
+        finish()
     }
 }
