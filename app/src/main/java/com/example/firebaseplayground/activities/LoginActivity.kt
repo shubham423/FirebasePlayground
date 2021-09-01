@@ -9,29 +9,27 @@ import android.view.View
 import android.view.WindowManager
 import com.example.firebaseplayground.R
 import com.example.firebaseplayground.databinding.ActivityLoginBinding
+import com.example.firebaseplayground.firestore.FirestoreClass
 import com.example.firebaseplayground.models.User
 import com.example.firebaseplayground.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_login.*
 
 @Suppress("DEPRECATION")
 class LoginActivity : BaseActivity(), View.OnClickListener {
 
-    private lateinit var binding: ActivityLoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+        setContentView(R.layout.activity_login)
 
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
 
-        binding.tvForgotPassword.setOnClickListener(this)
-        binding.btnLogin.setOnClickListener(this)
-        binding.tvRegister.setOnClickListener(this)
+        tv_forgot_password.setOnClickListener(this)
+        btn_login.setOnClickListener(this)
+        tv_register.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -39,7 +37,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             when (v.id) {
 
                 R.id.tv_forgot_password -> {
-
                     val intent = Intent(this@LoginActivity, ForgotPasswordActivity::class.java)
                     startActivity(intent)
                 }
@@ -59,11 +56,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
     private fun validateLoginDetails(): Boolean {
         return when {
-            TextUtils.isEmpty(binding.etEmail.text.toString().trim { it <= ' ' }) -> {
+            TextUtils.isEmpty(et_email.text.toString().trim { it <= ' ' }) -> {
                 showErrorSnackBar(resources.getString(R.string.err_msg_enter_email), true)
                 false
             }
-            TextUtils.isEmpty(binding.etPassword.text.toString().trim { it <= ' ' }) -> {
+            TextUtils.isEmpty(et_password.text.toString().trim { it <= ' ' }) -> {
                 showErrorSnackBar(resources.getString(R.string.err_msg_enter_password), true)
                 false
             }
@@ -73,24 +70,24 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         }
     }
 
-
     private fun logInRegisteredUser() {
 
         if (validateLoginDetails()) {
 
             showProgressDialog(resources.getString(R.string.please_wait))
 
-            val email = binding.etEmail.text.toString().trim { it <= ' ' }
-            val password = binding.etPassword.text.toString().trim { it <= ' ' }
+            val email = et_email.text.toString().trim { it <= ' ' }
+            val password = et_password.text.toString().trim { it <= ' ' }
 
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
-                    hideProgressDialog()
 
                     if (task.isSuccessful) {
-
-                        showErrorSnackBar("You are logged in successfully.", false)
+                        Log.d("LoginActivity","inside userLoginSuccess 4")
+                        FirestoreClass().getUserDetails(this@LoginActivity)
                     } else {
+                        Log.d("LoginActivity","inside userLoginSuccess 5")
+                        hideProgressDialog()
                         showErrorSnackBar(task.exception!!.message.toString(), true)
                     }
                 }
@@ -99,17 +96,18 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
     fun userLoggedInSuccess(user: User) {
 
+        Log.d("LoginActivity","inside userLoginSuccess")
         hideProgressDialog()
-        Log.i("First Name: ", user.firstName)
-        Log.i("Last Name: ", user.lastName)
-        Log.i("Email: ", user.email)
 
         if (user.profileCompleted == 0) {
+            Log.d("LoginActivity","inside userLoginSuccess 1")
             val intent = Intent(this@LoginActivity, UserProfileActivity::class.java)
             intent.putExtra(Constants.EXTRA_USER_DETAILS, user)
             startActivity(intent)
         } else {
-            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            Log.d("LoginActivity","inside userLoginSuccess 2")
+            startActivity(Intent(this@LoginActivity, DashboardActivity::class.java))
+
         }
         finish()
     }

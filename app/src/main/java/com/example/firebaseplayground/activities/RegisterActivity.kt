@@ -7,20 +7,20 @@ import android.view.WindowManager
 import android.widget.Toast
 import com.example.firebaseplayground.R
 import com.example.firebaseplayground.databinding.ActivityRegisterBinding
+import com.example.firebaseplayground.firestore.FirestoreClass
+import com.example.firebaseplayground.models.User
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.android.synthetic.main.activity_register.*
 
 @Suppress("DEPRECATION")
 class RegisterActivity : BaseActivity() {
 
-    private lateinit var binding: ActivityRegisterBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityRegisterBinding.inflate(layoutInflater)
-
-        setContentView(binding.root)
+        setContentView(R.layout.activity_register)
 
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -29,19 +29,20 @@ class RegisterActivity : BaseActivity() {
 
         setupActionBar()
 
-        binding.btnRegister.setOnClickListener {
-            Log.d("RegisterActivity","button clicked")
+        btn_register.setOnClickListener {
+
             registerUser()
         }
 
-        binding.tvLogin.setOnClickListener {
+        tv_login.setOnClickListener{
             onBackPressed()
         }
     }
 
+
     private fun setupActionBar() {
 
-        setSupportActionBar(binding.toolbarRegisterActivity)
+        setSupportActionBar(toolbar_register_activity)
 
         val actionBar = supportActionBar
         if (actionBar != null) {
@@ -49,32 +50,32 @@ class RegisterActivity : BaseActivity() {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_black_color_back_24dp)
         }
 
-        binding.toolbarRegisterActivity.setNavigationOnClickListener { onBackPressed() }
+        toolbar_register_activity.setNavigationOnClickListener { onBackPressed() }
     }
 
     private fun validateRegisterDetails(): Boolean {
         return when {
-            TextUtils.isEmpty(binding.etFirstName.text.toString().trim { it <= ' ' }) -> {
+            TextUtils.isEmpty(et_first_name.text.toString().trim { it <= ' ' }) -> {
                 showErrorSnackBar(resources.getString(R.string.err_msg_enter_first_name), true)
                 false
             }
 
-            TextUtils.isEmpty(binding.etLastName.text.toString().trim { it <= ' ' }) -> {
+            TextUtils.isEmpty(et_last_name.text.toString().trim { it <= ' ' }) -> {
                 showErrorSnackBar(resources.getString(R.string.err_msg_enter_last_name), true)
                 false
             }
 
-            TextUtils.isEmpty(binding.etEmail.text.toString().trim { it <= ' ' }) -> {
+            TextUtils.isEmpty(et_email.text.toString().trim { it <= ' ' }) -> {
                 showErrorSnackBar(resources.getString(R.string.err_msg_enter_email), true)
                 false
             }
 
-            TextUtils.isEmpty(binding.etPassword.text.toString().trim { it <= ' ' }) -> {
+            TextUtils.isEmpty(et_password.text.toString().trim { it <= ' ' }) -> {
                 showErrorSnackBar(resources.getString(R.string.err_msg_enter_password), true)
                 false
             }
 
-            TextUtils.isEmpty(binding.etConfirmPassword.text.toString().trim { it <= ' ' }) -> {
+            TextUtils.isEmpty(et_confirm_password.text.toString().trim { it <= ' ' }) -> {
                 showErrorSnackBar(
                     resources.getString(R.string.err_msg_enter_confirm_password),
                     true
@@ -82,8 +83,7 @@ class RegisterActivity : BaseActivity() {
                 false
             }
 
-            binding.etPassword.text.toString()
-                .trim { it <= ' ' } != binding.etConfirmPassword.text.toString()
+            et_password.text.toString().trim { it <= ' ' } != et_confirm_password.text.toString()
                 .trim { it <= ' ' } -> {
                 showErrorSnackBar(
                     resources.getString(R.string.err_msg_password_and_confirm_password_mismatch),
@@ -91,7 +91,7 @@ class RegisterActivity : BaseActivity() {
                 )
                 false
             }
-            !binding.cbTermsAndCondition.isChecked -> {
+            !cb_terms_and_condition.isChecked -> {
                 showErrorSnackBar(
                     resources.getString(R.string.err_msg_agree_terms_and_condition),
                     true
@@ -110,35 +110,35 @@ class RegisterActivity : BaseActivity() {
 
             showProgressDialog(resources.getString(R.string.please_wait))
 
-            val email: String = binding.etEmail.text.toString().trim { it <= ' ' }
-            val password: String = binding.etPassword.text.toString().trim { it <= ' ' }
+            val email: String = et_email.text.toString().trim { it <= ' ' }
+            val password: String = et_password.text.toString().trim { it <= ' ' }
 
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(
                     OnCompleteListener<AuthResult> { task ->
 
-                        hideProgressDialog()
                         if (task.isSuccessful) {
+
                             val firebaseUser: FirebaseUser = task.result!!.user!!
 
-                            showErrorSnackBar(
-                                "You are registered successfully. Your user id is ${firebaseUser.uid}",
-                                false
+                            val user = User(
+                                firebaseUser.uid,
+                                et_first_name.text.toString().trim { it <= ' ' },
+                                et_last_name.text.toString().trim { it <= ' ' },
+                                et_email.text.toString().trim { it <= ' ' }
                             )
 
-                            FirebaseAuth.getInstance().signOut()
-                            finish()
+                            FirestoreClass().registerUser(this@RegisterActivity, user)
                         } else {
+                            hideProgressDialog()
+
                             showErrorSnackBar(task.exception!!.message.toString(), true)
                         }
                     })
         }
-
-
     }
-    fun userRegistrationSuccess() {
 
-        // Hide the progress dialog
+    fun userRegistrationSuccess() {
         hideProgressDialog()
 
         Toast.makeText(
@@ -147,14 +147,7 @@ class RegisterActivity : BaseActivity() {
             Toast.LENGTH_SHORT
         ).show()
 
-
-        /**
-         * Here the new user registered is automatically signed-in so we just sign-out the user from firebase
-         * and send him to Intro Screen for Sign-In
-         */
         FirebaseAuth.getInstance().signOut()
-        // Finish the Register Screen
         finish()
     }
-
-    }
+}

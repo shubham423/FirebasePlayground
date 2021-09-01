@@ -3,6 +3,7 @@ package com.example.firebaseplayground.firestore
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.Uri
 import android.util.Log
 import com.example.firebaseplayground.activities.LoginActivity
 import com.example.firebaseplayground.activities.RegisterActivity
@@ -12,17 +13,21 @@ import com.example.firebaseplayground.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 class FirestoreClass {
-
     private val mFireStore = FirebaseFirestore.getInstance()
 
     fun registerUser(activity: RegisterActivity, userInfo: User) {
 
         mFireStore.collection(Constants.USERS)
+
             .document(userInfo.id)
+
             .set(userInfo, SetOptions.merge())
             .addOnSuccessListener {
+
                 activity.userRegistrationSuccess()
             }
             .addOnFailureListener { e ->
@@ -37,6 +42,7 @@ class FirestoreClass {
 
     fun getCurrentUserID(): String {
         val currentUser = FirebaseAuth.getInstance().currentUser
+
         var currentUserID = ""
         if (currentUser != null) {
             currentUserID = currentUser.uid
@@ -53,7 +59,6 @@ class FirestoreClass {
             .addOnSuccessListener { document ->
 
                 Log.i(activity.javaClass.simpleName, document.toString())
-
                 val user = document.toObject(User::class.java)!!
 
                 val sharedPreferences =
@@ -71,6 +76,7 @@ class FirestoreClass {
 
                 when (activity) {
                     is LoginActivity -> {
+                        Log.d("Firestore class","inside userLoginSuccess 6")
                         activity.userLoggedInSuccess(user)
                     }
                 }
@@ -101,7 +107,6 @@ class FirestoreClass {
                         activity.userProfileUpdateSuccess()
                     }
                 }
-
             }
             .addOnFailureListener { e ->
 
@@ -115,6 +120,48 @@ class FirestoreClass {
                     activity.javaClass.simpleName,
                     "Error while updating the user details.",
                     e
+                )
+            }
+    }
+
+    fun uploadImageToCloudStorage(activity: Activity, imageFileURI: Uri?) {
+        val sRef: StorageReference = FirebaseStorage.getInstance().reference.child(
+            Constants.USER_PROFILE_IMAGE + System.currentTimeMillis() + "."
+                    + Constants.getFileExtension(
+                activity,
+                imageFileURI
+            )
+        )
+
+        sRef.putFile(imageFileURI!!)
+            .addOnSuccessListener { taskSnapshot ->
+                Log.e(
+                    "Firebase Image URL",
+                    taskSnapshot.metadata!!.reference!!.downloadUrl.toString()
+                )
+
+                taskSnapshot.metadata!!.reference!!.downloadUrl
+                    .addOnSuccessListener { uri ->
+                        Log.e("Downloadable Image URL", uri.toString())
+
+                        when (activity) {
+                            is UserProfileActivity -> {
+                                activity.imageUploadSuccess(uri.toString())
+                            }
+                        }
+                    }
+            }
+            .addOnFailureListener { exception ->
+                when (activity) {
+                    is UserProfileActivity -> {
+                        activity.hideProgressDialog()
+                    }
+                }
+
+                Log.e(
+                    activity.javaClass.simpleName,
+                    exception.message,
+                    exception
                 )
             }
     }
