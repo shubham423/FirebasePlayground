@@ -5,9 +5,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import android.util.Log
-import com.example.firebaseplayground.activities.LoginActivity
-import com.example.firebaseplayground.activities.RegisterActivity
-import com.example.firebaseplayground.activities.UserProfileActivity
+import com.example.firebaseplayground.ui.activities.LoginActivity
+import com.example.firebaseplayground.ui.activities.RegisterActivity
+import com.example.firebaseplayground.ui.activities.UserProfileActivity
 import com.example.firebaseplayground.models.User
 import com.example.firebaseplayground.utils.Constants
 import com.google.firebase.auth.FirebaseAuth

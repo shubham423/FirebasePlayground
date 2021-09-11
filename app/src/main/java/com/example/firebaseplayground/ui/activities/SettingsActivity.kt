@@ -1,12 +1,12 @@
-package com.example.firebaseplayground.activities
+package com.example.firebaseplayground.ui.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.firebaseplayground.R
 
-class DashboardActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dashboard)
+        setContentView(R.layout.activity_settings)
     }
 }

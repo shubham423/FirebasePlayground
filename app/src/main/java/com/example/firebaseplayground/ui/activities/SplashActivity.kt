@@ -1,4 +1,4 @@
-package com.example.firebaseplayground.activities
+package com.example.firebaseplayground.ui.activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity

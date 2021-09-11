@@ -1,12 +1,10 @@
-package com.example.firebaseplayground.activities
+package com.example.firebaseplayground.ui.activities
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import com.example.firebaseplayground.R
-import com.example.firebaseplayground.databinding.ActivityRegisterBinding
 import com.example.firebaseplayground.firestore.FirestoreClass
 import com.example.firebaseplayground.models.User
 import com.google.android.gms.tasks.OnCompleteListener
